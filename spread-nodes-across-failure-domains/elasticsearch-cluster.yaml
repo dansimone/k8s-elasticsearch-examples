@@ -1,0 +1,40 @@
+apiVersion: elasticsearch.k8s.elastic.co/v1
+kind: Elasticsearch
+metadata:
+  name: example-cluster
+spec:
+  version: 7.8.1
+  nodeSets:
+    - name: masters
+      count: 3
+      config:
+        node.master: true
+        node.data: false
+        node.ingest: false
+        node.store.allow_mmap: false
+    - name: ingest
+      count: 1
+      config:
+        node.master: false
+        node.data: false
+        node.ingest: true
+        node.store.allow_mmap: false
+    - name: data
+      count: 3
+      config:
+        node.master: false
+        node.data: true
+        node.ingest: false
+        node.store.allow_mmap: false
+      podTemplate:
+        spec:
+          affinity:
+            podAntiAffinity:
+              preferredDuringSchedulingIgnoredDuringExecution:
+                - weight: 100
+                  podAffinityTerm:
+                    labelSelector:
+                      matchLabels:
+                        elasticsearch.k8s.elastic.co/cluster-name: example-cluster
+                        elasticsearch.k8s.elastic.co/node-data: "true"
+                    topologyKey: failure-domain.beta.kubernetes.io/zone
