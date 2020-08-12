@@ -1,4 +1,4 @@
-# Spreading Node Across Failure-Domains
+# Spreading Nodes Across Failure-Domains
 
 This example of an Elasticsearch cluster using [ECK](https://github.com/elastic/cloud-on-k8s) that 
 spreads Elasticsearch nodes of the various types across Kubernetes failure-domains.
